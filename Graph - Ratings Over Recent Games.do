@@ -1,4 +1,9 @@
 // Graph - Ratings Over Time.do
+
+syntax [anything(name=games_shown)]
+
+if "`games_shown'" == "" local games_shown 40
+
 frame games: drop if game == 0
 
 foreach name in $current_players {
@@ -30,14 +35,14 @@ label var David_S "David S"
 
 #d ;
 line 
-	$current_regulars game in -40/L
+	$current_regulars game in -`games_shown'/L
 	, 
 	$CRAPPR_chart_options
 	
 	lwidth(*1.7 ..)
 	
 	title("CRAPPR Rating Trends", span) 
-	subtitle("40 Most Recent Games", span) 
+	subtitle("`games_shown' Most Recent Games", span) 
 	 
 	yscale(r(0)) 
 	ylabel(0(5)25, angle(0)) 

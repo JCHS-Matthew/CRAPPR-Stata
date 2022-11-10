@@ -1,4 +1,7 @@
 // Graph - Leaderboard.do
+
+syntax anything(name=previous_leaderboard_date)
+
 cwf players
 gen hi = mean + 3*sd
 
@@ -35,7 +38,6 @@ gen change = 0
 
 cwf games
 preserve
-	local previous_leaderboard_date = td(03nov2022)
 	di `previous_leaderboard_date'
 	keep if date <= `previous_leaderboard_date'
 	keep in L
@@ -82,6 +84,11 @@ capture {
 	replace symbol = "−" if change == 0
 }
 
+frame games {
+	sum date
+	local current_leaderboard_date = r(max)
+}
+
 #d;
 	twoway 
 		(rcap CRAPPR hi n, horizontal color(gs7))
@@ -116,7 +123,7 @@ capture {
 			"[1] Red ratings indicate current players. "
 			"[2] Includes games played through Oct. 5, 2022."
 */
-			"Note: Includes games played through Nov. 3, 2022."
+			"Note: Includes games played through `=string(`current_leaderboard_date', "%tdMon._dd,_CCYY")'."
 			, span
 		)
 		
