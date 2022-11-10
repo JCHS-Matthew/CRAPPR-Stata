@@ -35,7 +35,7 @@ gen change = 0
 
 cwf games
 preserve
-	local previous_leaderboard_date = td(27oct2022)
+	local previous_leaderboard_date = td(03nov2022)
 	di `previous_leaderboard_date'
 	keep if date <= `previous_leaderboard_date'
 	keep in L
@@ -125,4 +125,4 @@ capture {
 		xsize(6.5) 
 		ysize(9)
 ;#d cr
-graph export "Graph - Leaderboard.png", width(2400) replace
+graph export "output/Graph - Leaderboard.png", width(2400) replace

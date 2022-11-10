@@ -46,4 +46,4 @@ drop if ratingorder == ratingorder[_n-1]
 drop foo
 gen foo = -1 * (_N - _n)
 line $current_regulars foo in -35/L, lwidth(3 ..) yscale(reverse) ylabel(1/15, angle(0)) xlabel(-30(10)0) title("CRAPPR Rankings", span) subtitle("Over 35 Most Recent Ranking Changes", span) xtitle("") legend(col(1) pos(3) symxsize(4) rowgap(3) region(style(none) margin(0 0 0 0)) bmargin(1 0 .25 .25)) xsize(6.5) ysize(4.45) graphregion(color(white) margin(0 0 0 0))
-graph export "Graph - Ranking Changes.png", width(2400) replace
+graph export "output/Graph - Ranking Changes.png", width(2400) replace

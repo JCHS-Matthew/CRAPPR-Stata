@@ -55,4 +55,4 @@ line
 ;
 #d cr;
 
-graph export "Graph - Ratings Over Recent Games.png", width(2400) replace
+graph export "output/Graph - Ratings Over Recent Games.png", width(2400) replace
