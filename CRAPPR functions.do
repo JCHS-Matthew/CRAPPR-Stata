@@ -217,3 +217,34 @@ program def add_game
 	cwf players
 	gsort -CRAPPR
 end
+
+
+cap program drop join_ratings_to_games
+program define join_ratings_to_games
+
+	frame games: drop if game == 0
+
+	foreach name in $current_players {
+		cwf `name'
+		tempfile player
+		save `player'
+		cwf games
+		merge 1:1 game using `player', nogen keep(match master)
+		
+		replace mean = mean[_n-1] if mi(mean)
+		replace sd   = sd[_n-1]   if mi(sd)
+
+		gen `name' = mean - 3 * sd
+
+		rename mean `name'_mean
+		rename sd `name'_sd
+	}
+
+	foreach player in $current_regulars {
+		di "`player'"
+		label var `player' "`player'"
+	}
+
+	label var Sherry_J "Sherry J"
+	label var David_S "David S"
+end
