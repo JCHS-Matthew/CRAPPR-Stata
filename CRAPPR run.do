@@ -4,8 +4,6 @@ clear all
 do "CRAPPR functions.do"
 
 global all_players `" Ben Mark Gustavo Matt Andrew Lena Peter Jeffrey Sherry Steve Ricardo Neil Neil_intern Laury Jessica Isabel Mensur David Chloe Niraj James Arun Rowan David_S Andres Victor Zeeshan Jack Sherry_J Yumeng Karen Nikhil Ben_OH Matt_OH Rowan_OH Andres_OH"'
-global current_players  `"Ben Andres Matt Rowan Ricardo Sherry_J Neil Jeffrey Arun David_S Jack Zeeshan Yumeng Victor Laury Nikhil Karen Niraj"'
-global current_regulars `"Ben Andres Matt Rowan Ricardo Sherry_J Neil         Arun David_S Jack Zeeshan Yumeng Victor Laury Nikhil Karen Niraj"'
 
 cap frame drop players
 frame create players
@@ -61,11 +59,15 @@ forval game = 1/`=_N' {
 }
 
 join_ratings_to_games
+join_player_attributes
 
 cwf players
 gsort -CRAPPR
+
+rebuild_leaderboard_macros
+
 format mean sd CRAPPR %4.2f
-list name CRAPPR games if regexm(name, usubinstr("$current_players", " ", "|", .)) // strpos("$current_players", name)
+list name CRAPPR games if current_regular
 
 exit
 

@@ -248,3 +248,33 @@ program define join_ratings_to_games
 	label var Sherry_J "Sherry J"
 	label var David_S "David S"
 end
+
+
+cap program drop join_player_attributes
+program define join_player_attributes
+	cwf players
+	preserve
+		import delimited "data\player attributes.csv", varn(1) clear
+		tempfile player_attributes
+		save 	`player_attributes'
+	restore
+	merge 1:1 name using `player_attributes', assert(match) nogen
+end
+
+cap program drop rebuild_leaderboard_macros
+program define rebuild_leaderboard_macros
+	cwf players
+	
+	global all_players      `""'
+	global current_players  `""'
+	global current_regulars `""'
+	
+	forval obs = 1/`=_N' {
+		di name[`obs']
+		
+		global all_players      `"${all_players} `=name[`obs']'"' 
+		if `=current_player[`obs']' == 1 global current_players  `"${current_players} `=name[`obs']'"' 
+		if `=current_regular[`obs']' == 1 global current_regulars `"${current_regulars} `=name[`obs']'"'
+		
+	}
+end
