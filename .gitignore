@@ -1,1 +1,5 @@
-/data
+*Match Results.csv
+
+# ignore temp Office files
+~$*.doc*
+~$*.xls*
