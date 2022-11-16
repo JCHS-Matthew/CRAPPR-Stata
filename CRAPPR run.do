@@ -3,7 +3,7 @@ clear all
 
 do "CRAPPR functions.do"
 
-global all_players `" Ben Mark Gustavo Matt Andrew Lena Peter Jeffrey Sherry Steve Ricardo Neil Neil_intern Laury Jessica Isabel Mensur David Chloe Niraj James Arun Rowan David_S Andres Victor Zeeshan Jack Sherry_J Yumeng Karen Nikhil Ben_OH Matt_OH Rowan_OH Andres_OH"'
+global all_players `" Ben Mark Gustavo Matt Andrew Lena Peter Jeffrey Sherry Steve Ricardo Neil Neil_intern Laury Jessica Isabel Mensur David Chloe Niraj James Arun Rowan David_S Andres Victor Zeeshan Jack Sherry_J Yumeng Karen Nikhil Raina Ben_OH Matt_OH Rowan_OH Andres_OH"'
 
 cap frame drop players
 frame create players
@@ -58,13 +58,11 @@ forval game = 1/`=_N' {
 	if `game' == `=_N' noi di "done"
 }
 
-join_ratings_to_games
 join_player_attributes
+rebuild_leaderboard_macros
+join_ratings_to_games
 
 cwf players
-gsort -CRAPPR
-
-rebuild_leaderboard_macros
 
 format mean sd CRAPPR %4.2f
 list name CRAPPR games if current_regular

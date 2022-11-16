@@ -264,7 +264,9 @@ end
 cap program drop rebuild_leaderboard_macros
 program define rebuild_leaderboard_macros
 	cwf players
-	
+
+	gsort -CRAPPR
+
 	global all_players      `""'
 	global current_players  `""'
 	global current_regulars `""'
