@@ -22,6 +22,7 @@ foreach name in $all_players {
 }
 
 drop if game == 0
+
 line 	$all_players game in 1/25, title(CRAPPR Rating, span) subtitle(" ") legend(col(1) pos(3)) yscale(r(0)) ylabel(0(5)30, angle(0)) xtitle("Game") xlabel(0(5)30, grid) graphregion(color(white)) 
 line 	$current_regulars game in 1/25, title(CRAPPR Rating, span) subtitle(" ") legend(col(1) pos(3)) yscale(r(0)) ylabel(0(5)30, angle(0)) xtitle("Game") xlabel(0(5)30, grid) graphregion(color(white)) 
 
