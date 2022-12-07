@@ -3,6 +3,10 @@
 syntax anything(name=previous_leaderboard_date)
 
 cwf players
+cap frame drop leaderboard
+frame put *, into(leaderboard)
+cwf leaderboard
+
 gen hi = mean + 3*sd
 
 gen preliminary = games < 2
@@ -73,7 +77,7 @@ preserve
 	save `change'
 restore
 
-cwf players
+cwf leaderboard
 
 merge 1:1 name using `change', /* assert(match master) */ nogen update replace
 
