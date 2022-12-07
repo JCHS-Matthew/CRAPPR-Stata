@@ -56,9 +56,14 @@ end
 
 cap program drop CRAPPR_predict
 program define CRAPPR_predict
+	syntax namelist(name=player min=4 max=4), [noPost]
 	args player1 player2 player3 player4
-	
+
 	quietly {
+		
+	frame
+	local currentframe = r(currentframe)
+	
 	noi di as text "Game: " as result "`player1'/`player2' vs. `player3'/`player4'"
 	cwf players
 	tempfile players
@@ -86,7 +91,7 @@ program define CRAPPR_predict
 	noi di as text"Game skill estimate difference: " as result %4.2f `skill_diff'
 	
 	#d ;
-	local prediction = normal(
+	global prediction = normal(
 		`skill_diff'
 		/
 		sqrt(
@@ -99,17 +104,19 @@ program define CRAPPR_predict
 	)
 	; #d cr
 	
-	noi di as text "Predicted outcome: " as result %4.1f 100 * `prediction' "% chance of winning"
+	noi di as text "Predicted outcome: " as result %4.1f 100 * $prediction "% chance of winning"
 	
-	
-	cap frame create predictions str100 matchup float skill_diff float prediction
-	
-	frame post predictions ("`player1'/`player2' vs. `player3'/`player4'") (`skill_diff') (100 * `prediction')
+	if "`post'" != "nopost" {
+		cap frame create predictions str100 matchup float skill_diff float prediction
+		frame post predictions ("`player1'/`player2' vs. `player3'/`player4'") (`skill_diff') (100 * $prediction)
+	}
 	
 	cwf players
 	
 	cap frame drop calc_predict
 	}
+	
+	cwf `currentframe'
 
 end
 
@@ -120,6 +127,11 @@ program def game
 	quietly {
 	di "`row'"
 
+	CRAPPR_predict `=winner1[`row']' `=winner2[`row']' `=loser1[`row']' `=loser2[`row']' , nopost
+	cap confirm var pre_match_prediction
+	if _rc == 111 gen pre_match_prediction = .
+	replace pre_match_prediction = $prediction in `row'
+	
 	cap frame drop calc_game
 	frame put * in `row', into(calc_game)
 	frame calc_game {
@@ -130,7 +142,10 @@ program def game
 			frlink m:1 `player', frame(players name) gen(`player'_link)	
 			frget pre_`player'_mean = mean, from(`player'_link)
 			frget pre_`player'_sd = sd, from(`player'_link)
+			frget pre_`player'_games = games, from(`player'_link)
 		}
+		
+		local pre_match_min_player_games = min(pre_winner1_games, pre_winner2_games, pre_loser1_games, pre_loser2_games)
 		
 		gen pre_winner_mean_sum = pre_winner1_mean + pre_winner2_mean
 		gen pre_loser_mean_sum  = pre_loser1_mean + pre_loser2_mean
@@ -164,7 +179,12 @@ program def game
 	cap frame drop calc_game
 	
 	rebuild_players
-	keep game date winner1 winner2 loser1 loser2
+	
+	cap confirm var pre_match_min_player_games
+	if _rc == 111 gen pre_match_min_player_games = .
+	replace pre_match_min_player_games = `pre_match_min_player_games' in `row'
+	
+	keep game date winner1 winner2 loser1 loser2 pre_match_prediction pre_match_min_player_games
 	
 	}
 	
