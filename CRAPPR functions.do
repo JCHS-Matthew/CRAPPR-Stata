@@ -280,3 +280,38 @@ program define rebuild_leaderboard_macros
 		
 	}
 end
+
+
+cap program drop export_web_data
+program define export_web_data
+
+	frame
+	local currentframe = r(currentframe)
+	
+	cap noisily confirm frame leaderboard
+	if _rc == 111 {
+		noi di as error `"run "Graph - Leaderboard.do" before attempting to export web data"'
+		exit
+	}
+	
+	cwf leaderboard
+	cap frame drop web_data
+	frame put *, into(web_data)
+	cwf web_data
+	
+	gen web_data = name + ": { mean: " + string(mean) + ", sd: " + string(sd) + ", change: " + string(change) + "},"
+	keep web_data
+	
+	set obs `=_N+2'
+	sort web_data
+	replace web_data = `"let leaderboard_date = "12/1/2022""' in 1
+	replace web_data = "let players = {" in 2
+	
+	set obs `=_N+1'
+	replace web_data = "}" in L
+	
+	outfile using "../CRAPPR-dashboard/js/data.js", noquote replace
+
+	cwf `currentframe'
+	
+end
