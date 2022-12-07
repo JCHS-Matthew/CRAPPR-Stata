@@ -3,7 +3,47 @@ clear all
 
 do "CRAPPR functions.do"
 
-global all_players `" Ben Mark Gustavo Matt Andrew Lena Peter Jeffrey Sherry Steve Ricardo Neil Neil_intern Laury Jessica Isabel Mensur David Chloe Niraj James Arun Rowan David_S Andres Victor Zeeshan Jack Sherry_J Yumeng Karen Nikhil Raina Ben_OH Matt_OH Rowan_OH Andres_OH"'
+#d ;
+global all_players `" 
+	Ben 
+	Mark 
+	Gustavo 
+	Matt 
+	Andrew 
+	Lena 
+	Peter 
+	Jeffrey 
+	Sherry 
+	Steve 
+	Ricardo 
+	Neil 
+	Neil_intern 
+	Laury 
+	Jessica 
+	Isabel 
+	Mensur 
+	David 
+	Chloe 
+	Niraj 
+	James 
+	Arun 
+	Rowan 
+	David_S 
+	Andres 
+	Victor 
+	Zeeshan 
+	Jack 
+	Sherry_J 
+	Yumeng 
+	Karen 
+	Nikhil 
+	Raina 
+	Shuang 
+	Ben_OH 
+	Matt_OH 
+	Rowan_OH 
+	Andres_OH
+"'; #d cr
 
 cap frame drop players
 frame create players
