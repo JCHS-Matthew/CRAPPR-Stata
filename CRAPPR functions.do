@@ -64,6 +64,18 @@ program define CRAPPR_predict
 	frame
 	local currentframe = r(currentframe)
 	
+	if "`player2'" < "`player1'" {
+		local sort "`player1'"
+		local player1 "`player2'"
+		local player2 "`sort'"
+	}
+	
+	if "`player4'" < "`player3'" {
+		local sort "`player3'"
+		local player3 "`player4'"
+		local player4 "`sort'"
+	}
+	
 	noi di as text "Game: " as result "`player1'/`player2' vs. `player3'/`player4'"
 	cwf players
 	tempfile players
@@ -300,3 +312,95 @@ program define rebuild_leaderboard_macros
 		
 	}
 end
+
+
+cap program drop matchup
+program define matchup
+	syntax namelist(name=players min=4), [OFFhand KEEPresults noDISPlay]
+	
+	local i = 1
+	foreach player of local players {
+		local p`i' "`player'"
+		local ++i
+	}
+	
+	cwf players
+	
+	if "`keepresults'" == "" cap frame drop predictions
+	
+	_matchup_permutations `p1' `p2' `p3' `p4'
+	
+	if "`offhand'" == "offhand" {
+		frame players: count if name == "`p1'_OH"
+		if r(N) == 1 _matchup_permutations `p1'_OH `p2' `p3' `p4'
+		
+		frame players: count if name == "`p2'_OH"
+		if r(N) == 1 _matchup_permutations `p1' `p2'_OH `p3' `p4'
+		
+		frame players: count if name == "`p3'_OH"
+		if r(N) == 1 _matchup_permutations `p1' `p2' `p3'_OH `p4'
+		
+		frame players: count if name == "`p4'_OH"
+		if r(N) == 1 _matchup_permutations `p1' `p2' `p3' `p4'_OH
+	}
+	
+	if "`display'" != "nodisplay" _display_predictions
+	
+end
+
+cap program drop _matchup_permutations
+program define _matchup_permutations
+	args p1 p2 p3 p4
+		
+	CRAPPR_predict `p1' `p2' `p3' `p4'
+	CRAPPR_predict `p1' `p3' `p2' `p4'
+	CRAPPR_predict `p1' `p4' `p2' `p3'
+	
+end
+
+cap program drop _display_predictions
+program define _display_predictions
+	frame predictions {
+		duplicates drop
+		gen quality = -2 * abs(50 - prediction)
+		gsort -quality
+		format prediction quality %4.2f
+		list matchup prediction quality, ab(10)
+		drop quality
+	}
+end
+
+cap program drop matchup_group
+program define matchup_group
+	syntax namelist(name=players min=4), [OFFhand KEEPresults noDISPlay]
+	
+	di `: word count `players''
+	local i = 1
+	foreach player of local players {
+		local p`i' "`player'"
+		local ++i
+	}
+	
+	matchup `p1' `p2' `p3' `p4', `offhand' `keepresults' nodisplay
+
+	if `: word count `players'' >= 5 {
+		matchup `p5' `p2' `p3' `p4', `offhand' keep nodisplay
+		matchup `p1' `p5' `p3' `p4', `offhand' keep nodisplay
+		matchup `p1' `p2' `p5' `p4', `offhand' keep nodisplay
+		matchup `p1' `p2' `p3' `p5', `offhand' keep nodisplay
+	}
+	
+	if `: word count `players'' >= 6 {
+		matchup_group `p1' `p2' `p3' `p4' `p6', `offhand' keep nodisplay
+		matchup_group `p5' `p2' `p3' `p4' `p6', `offhand' keep nodisplay
+		matchup_group `p1' `p5' `p3' `p4' `p6', `offhand' keep nodisplay
+		matchup_group `p1' `p2' `p5' `p4' `p6', `offhand' keep nodisplay
+		matchup_group `p1' `p2' `p3' `p5' `p6', `offhand' keep nodisplay
+	}
+	
+	if "`display'" != "nodisplay" _display_predictions
+	
+end
+
+
+
