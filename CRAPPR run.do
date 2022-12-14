@@ -122,3 +122,5 @@ putdocx image "output/Graph - Ratings Over Recent Games.png"
 putdocx save  "output/CRAPPR - Weekly Ranking.docx", replace
 
 exit
+
+top_matchups

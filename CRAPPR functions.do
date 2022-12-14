@@ -451,3 +451,40 @@ program define compile_predictions
 	format prediction quality %4.2f
 
 end
+
+
+cap program drop top_matchups
+program define top_matchups
+	
+	confirm frame predictions
+	if _rc != 0 compile_predictions
+	
+	cwf predictions
+	
+	cap drop top_matchup
+	gen top_matchup = .
+	foreach player in $current_regulars {
+		local i = 1
+		di "`player'"
+		forval j = 1/`=_N' {
+			if  regexm(`"`=matchup[`j']'"', "`player'") {
+				if `i' < `=top_matchup[`j']' {
+					replace top_matchup = `i' in `j'
+				}
+				local ++i
+			}
+		}
+	}
+
+	cap drop team1 team2
+	gen team1 = regexs(1) if regexm(matchup, "(.+) vs")
+	gen team2 = regexs(1) if regexm(matchup, "vs. (.+)")
+
+	replace team1 = regexs(1) + " / " + regexs(2) if regexm(team1, "(.*)/(.*)")
+	replace team2 = regexs(1) + " / " + regexs(2) if regexm(team2, "(.*)/(.*)")
+
+	order prediction quality, last
+
+	br team1 team2 prediction quality if top_matchup <= 5 & quality > 98
+	
+end
