@@ -348,6 +348,7 @@ program define matchup
 	
 end
 
+
 cap program drop _matchup_permutations
 program define _matchup_permutations
 	args p1 p2 p3 p4
@@ -369,6 +370,7 @@ program define _display_predictions
 		drop quality
 	}
 end
+
 
 cap program drop matchup_group
 program define matchup_group
@@ -430,7 +432,6 @@ program define compile_predictions
 	drop if name1 > name3
 	order name1 name2 name3 name4
 
-
 	cwf pairwise
 	cap frame drop predictions
 
@@ -486,5 +487,39 @@ program define top_matchups
 	order prediction quality, last
 
 	br team1 team2 prediction quality if top_matchup <= 5 & quality > 98
+end
+
+
+cap program drop export_web_data
+program define export_web_data
+
+	frame
+	local currentframe = r(currentframe)
+	
+	cap noisily confirm frame leaderboard
+	if _rc == 111 {
+		noi di as error `"run "Graph - Leaderboard.do" before attempting to export web data"'
+		exit
+	}
+	
+	cwf leaderboard
+	cap frame drop web_data
+	frame put *, into(web_data)
+	cwf web_data
+	
+	gen web_data = name + ": { mean: " + string(mean) + ", sd: " + string(sd) + ", change: " + string(change) + "},"
+	keep web_data
+	
+	set obs `=_N+2'
+	sort web_data
+	replace web_data = `"let leaderboard_date = "12/1/2022""' in 1
+	replace web_data = "let players = {" in 2
+	
+	set obs `=_N+1'
+	replace web_data = "}" in L
+	
+	outfile using "../CRAPPR-dashboard/js/data.js", noquote replace
+
+	cwf `currentframe'
 	
 end

@@ -123,4 +123,8 @@ putdocx save  "output/CRAPPR - Weekly Ranking.docx", replace
 
 exit
 
+export_web_data
+
+exit
+
 top_matchups
