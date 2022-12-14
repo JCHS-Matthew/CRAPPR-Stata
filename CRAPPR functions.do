@@ -56,9 +56,26 @@ end
 
 cap program drop CRAPPR_predict
 program define CRAPPR_predict
+	syntax namelist(name=player min=4 max=4), [noPost]
 	args player1 player2 player3 player4
-	
+
 	quietly {
+		
+	frame
+	local currentframe = r(currentframe)
+	
+	if "`player2'" < "`player1'" {
+		local sort "`player1'"
+		local player1 "`player2'"
+		local player2 "`sort'"
+	}
+	
+	if "`player4'" < "`player3'" {
+		local sort "`player3'"
+		local player3 "`player4'"
+		local player4 "`sort'"
+	}
+	
 	noi di as text "Game: " as result "`player1'/`player2' vs. `player3'/`player4'"
 	cwf players
 	tempfile players
@@ -86,7 +103,7 @@ program define CRAPPR_predict
 	noi di as text"Game skill estimate difference: " as result %4.2f `skill_diff'
 	
 	#d ;
-	local prediction = normal(
+	global prediction = normal(
 		`skill_diff'
 		/
 		sqrt(
@@ -99,17 +116,19 @@ program define CRAPPR_predict
 	)
 	; #d cr
 	
-	noi di as text "Predicted outcome: " as result %4.1f 100 * `prediction' "% chance of winning"
+	noi di as text "Predicted outcome: " as result %4.1f 100 * $prediction "% chance of winning"
 	
-	
-	cap frame create predictions str100 matchup float skill_diff float prediction
-	
-	frame post predictions ("`player1'/`player2' vs. `player3'/`player4'") (`skill_diff') (100 * `prediction')
+	if "`post'" != "nopost" {
+		cap frame create predictions str100 matchup float skill_diff float prediction
+		frame post predictions ("`player1'/`player2' vs. `player3'/`player4'") (`skill_diff') (100 * $prediction)
+	}
 	
 	cwf players
 	
 	cap frame drop calc_predict
 	}
+	
+	cwf `currentframe'
 
 end
 
@@ -120,6 +139,11 @@ program def game
 	quietly {
 	di "`row'"
 
+	CRAPPR_predict `=winner1[`row']' `=winner2[`row']' `=loser1[`row']' `=loser2[`row']' , nopost
+	cap confirm var pre_match_prediction
+	if _rc == 111 gen pre_match_prediction = .
+	replace pre_match_prediction = $prediction in `row'
+	
 	cap frame drop calc_game
 	frame put * in `row', into(calc_game)
 	frame calc_game {
@@ -130,7 +154,10 @@ program def game
 			frlink m:1 `player', frame(players name) gen(`player'_link)	
 			frget pre_`player'_mean = mean, from(`player'_link)
 			frget pre_`player'_sd = sd, from(`player'_link)
+			frget pre_`player'_games = games, from(`player'_link)
 		}
+		
+		local pre_match_min_player_games = min(pre_winner1_games, pre_winner2_games, pre_loser1_games, pre_loser2_games)
 		
 		gen pre_winner_mean_sum = pre_winner1_mean + pre_winner2_mean
 		gen pre_loser_mean_sum  = pre_loser1_mean + pre_loser2_mean
@@ -164,7 +191,12 @@ program def game
 	cap frame drop calc_game
 	
 	rebuild_players
-	keep game date winner1 winner2 loser1 loser2
+	
+	cap confirm var pre_match_min_player_games
+	if _rc == 111 gen pre_match_min_player_games = .
+	replace pre_match_min_player_games = `pre_match_min_player_games' in `row'
+	
+	keep game date winner1 winner2 loser1 loser2 pre_match_prediction pre_match_min_player_games
 	
 	}
 	
@@ -279,6 +311,182 @@ program define rebuild_leaderboard_macros
 		if `=current_regular[`obs']' == 1 global current_regulars `"${current_regulars} `=name[`obs']'"'
 		
 	}
+end
+
+
+cap program drop matchup
+program define matchup
+	syntax namelist(name=players min=4), [OFFhand KEEPresults noDISPlay]
+	
+	local i = 1
+	foreach player of local players {
+		local p`i' "`player'"
+		local ++i
+	}
+	
+	cwf players
+	
+	if "`keepresults'" == "" cap frame drop predictions
+	
+	_matchup_permutations `p1' `p2' `p3' `p4'
+	
+	if "`offhand'" == "offhand" {
+		frame players: count if name == "`p1'_OH"
+		if r(N) == 1 _matchup_permutations `p1'_OH `p2' `p3' `p4'
+		
+		frame players: count if name == "`p2'_OH"
+		if r(N) == 1 _matchup_permutations `p1' `p2'_OH `p3' `p4'
+		
+		frame players: count if name == "`p3'_OH"
+		if r(N) == 1 _matchup_permutations `p1' `p2' `p3'_OH `p4'
+		
+		frame players: count if name == "`p4'_OH"
+		if r(N) == 1 _matchup_permutations `p1' `p2' `p3' `p4'_OH
+	}
+	
+	if "`display'" != "nodisplay" _display_predictions
+	
+end
+
+
+cap program drop _matchup_permutations
+program define _matchup_permutations
+	args p1 p2 p3 p4
+		
+	CRAPPR_predict `p1' `p2' `p3' `p4'
+	CRAPPR_predict `p1' `p3' `p2' `p4'
+	CRAPPR_predict `p1' `p4' `p2' `p3'
+	
+end
+
+cap program drop _display_predictions
+program define _display_predictions
+	frame predictions {
+		duplicates drop
+		gen quality = -2 * abs(50 - prediction)
+		gsort -quality
+		format prediction quality %4.2f
+		list matchup prediction quality, ab(10)
+		drop quality
+	}
+end
+
+
+cap program drop matchup_group
+program define matchup_group
+	syntax namelist(name=players min=4), [OFFhand KEEPresults noDISPlay]
+	
+	di `: word count `players''
+	local i = 1
+	foreach player of local players {
+		local p`i' "`player'"
+		local ++i
+	}
+	
+	matchup `p1' `p2' `p3' `p4', `offhand' `keepresults' nodisplay
+
+	if `: word count `players'' >= 5 {
+		matchup `p5' `p2' `p3' `p4', `offhand' keep nodisplay
+		matchup `p1' `p5' `p3' `p4', `offhand' keep nodisplay
+		matchup `p1' `p2' `p5' `p4', `offhand' keep nodisplay
+		matchup `p1' `p2' `p3' `p5', `offhand' keep nodisplay
+	}
+	
+	if `: word count `players'' >= 6 {
+		matchup_group `p1' `p2' `p3' `p4' `p6', `offhand' keep nodisplay
+		matchup_group `p5' `p2' `p3' `p4' `p6', `offhand' keep nodisplay
+		matchup_group `p1' `p5' `p3' `p4' `p6', `offhand' keep nodisplay
+		matchup_group `p1' `p2' `p5' `p4' `p6', `offhand' keep nodisplay
+		matchup_group `p1' `p2' `p3' `p5' `p6', `offhand' keep nodisplay
+	}
+	
+	if "`display'" != "nodisplay" _display_predictions
+	
+end
+
+
+cap program drop compile_predictions
+program define compile_predictions
+	cwf players
+	cap frame drop pairwise
+	frame put name if current_regular & games >= 10, into(pairwise)
+	cwf pairwise
+	drop if name == "Laury"
+	rename name name1
+	gen i = 1
+	tempfile names
+	save `names', replace
+	rename name1 name2
+	joinby i using `names'
+	save `names', replace
+	rename name1 name3
+	rename name2 name4
+	joinby i using `names'
+	drop i
+	drop if name1 == name2
+	drop if name3 == name4
+	drop if inlist(name1, name3, name4)
+	drop if inlist(name2, name3, name4)
+	drop if name1 > name2
+	drop if name3 > name4
+	drop if name1 > name3
+	order name1 name2 name3 name4
+
+	cwf pairwise
+	cap frame drop predictions
+
+	forval i = 1/`=_N' {
+		if mod(`i', 100) == 0 {
+			noi di %6.0fc `i' _n _c
+		}
+		else if mod(`i', 10) == 0 {
+			noi di "." _c
+		}
+		quietly CRAPPR_predict `=name1[`i']' `=name2[`i']' `=name3[`i']' `=name4[`i']'
+	}
+
+	cwf predictions
+	duplicates drop
+	gen quality = 100 - 2 * abs(50 - prediction)
+	gsort -quality
+	format prediction quality %4.2f
+
+end
+
+
+cap program drop top_matchups
+program define top_matchups
+	
+	confirm frame predictions
+	if _rc != 0 compile_predictions
+	
+	cwf predictions
+	
+	cap drop top_matchup
+	gen top_matchup = .
+	foreach player in $current_regulars {
+		local i = 1
+		di "`player'"
+		forval j = 1/`=_N' {
+			if  regexm(`"`=matchup[`j']'"', "`player'") {
+				if `i' < `=top_matchup[`j']' {
+					replace top_matchup = `i' in `j'
+				}
+				local ++i
+			}
+		}
+	}
+
+	cap drop team1 team2
+	gen team1 = regexs(1) if regexm(matchup, "(.+) vs")
+	gen team2 = regexs(1) if regexm(matchup, "vs. (.+)")
+
+	replace team1 = regexs(1) + " / " + regexs(2) if regexm(team1, "(.*)/(.*)")
+	replace team2 = regexs(1) + " / " + regexs(2) if regexm(team2, "(.*)/(.*)")
+
+	order prediction quality, last
+
+	br team1 team2 prediction quality if top_matchup <= 5 & quality > 98
 end
 
 
