@@ -403,4 +403,51 @@ program define matchup_group
 end
 
 
+cap program drop compile_predictions
+program define compile_predictions
+	cwf players
+	cap frame drop pairwise
+	frame put name if current_regular & games >= 10, into(pairwise)
+	cwf pairwise
+	drop if name == "Laury"
+	rename name name1
+	gen i = 1
+	tempfile names
+	save `names', replace
+	rename name1 name2
+	joinby i using `names'
+	save `names', replace
+	rename name1 name3
+	rename name2 name4
+	joinby i using `names'
+	drop i
+	drop if name1 == name2
+	drop if name3 == name4
+	drop if inlist(name1, name3, name4)
+	drop if inlist(name2, name3, name4)
+	drop if name1 > name2
+	drop if name3 > name4
+	drop if name1 > name3
+	order name1 name2 name3 name4
 
+
+	cwf pairwise
+	cap frame drop predictions
+
+	forval i = 1/`=_N' {
+		if mod(`i', 100) == 0 {
+			noi di %6.0fc `i' _n _c
+		}
+		else if mod(`i', 10) == 0 {
+			noi di "." _c
+		}
+		quietly CRAPPR_predict `=name1[`i']' `=name2[`i']' `=name3[`i']' `=name4[`i']'
+	}
+
+	cwf predictions
+	duplicates drop
+	gen quality = 100 - 2 * abs(50 - prediction)
+	gsort -quality
+	format prediction quality %4.2f
+
+end
