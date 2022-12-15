@@ -3,52 +3,14 @@ clear all
 
 do "CRAPPR functions.do"
 
-#d ;
-global all_players `" 
-	Ben 
-	Mark 
-	Gustavo 
-	Matt 
-	Andrew 
-	Lena 
-	Peter 
-	Jeffrey 
-	Sherry 
-	Steve 
-	Ricardo 
-	Neil 
-	Neil_intern 
-	Laury 
-	Jessica 
-	Isabel 
-	Mensur 
-	David 
-	Chloe 
-	Niraj 
-	James 
-	Arun 
-	Rowan 
-	David_S 
-	Andres 
-	Victor 
-	Zeeshan 
-	Jack 
-	Sherry_J 
-	Yumeng 
-	Karen 
-	Nikhil 
-	Raina 
-	Shuang 
-	Ben_OH 
-	Matt_OH 
-	Rowan_OH 
-	Andres_OH
-"'; #d cr
-
 cap frame drop players
 frame create players
 cwf players
-foreach player in $all_players {
+
+import delimited "data\player attributes.csv", varn(1) clear
+levelsof name, local(all_players)
+clear
+foreach player in `all_players' {
 	create_player `player'
 }
 
