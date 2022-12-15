@@ -85,18 +85,7 @@ foreach var in winner1 winner2 loser1 loser2 {
 gen game = _n
 order game
 
-forval game = 1/`=_N' {
-	if mod(`game', 100) == 0 {
-		noi di %5.0fc `game' _n _c
-	}
-	else if mod(`game', 10) == 0 {
-		noi di "." _c
-	}
-
-	game `game'
-	
-	if `game' == `=_N' noi di "done"
-}
+analyze_games
 
 join_player_attributes
 rebuild_leaderboard_macros

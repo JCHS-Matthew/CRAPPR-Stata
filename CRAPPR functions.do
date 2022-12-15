@@ -251,6 +251,23 @@ program def add_game
 end
 
 
+cap program drop analyze_games
+program define analyze_games
+	forval game = 1/`=_N' {
+		if mod(`game', 100) == 0 {
+			noi di %5.0fc `game' _n _c
+		}
+		else if mod(`game', 10) == 0 {
+			noi di "." _c
+		}
+
+		game `game'
+		
+		if `game' == `=_N' noi di "done"
+	}
+end
+
+
 cap program drop join_ratings_to_games
 program define join_ratings_to_games
 
