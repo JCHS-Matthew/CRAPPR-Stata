@@ -125,6 +125,8 @@ exit
 
 export_web_data
 
+! cd "..\CRAPPR-dashboard" & git add "js/data.js" & git commit -m "update ranking data" & git push
+
 exit
 
 top_matchups
