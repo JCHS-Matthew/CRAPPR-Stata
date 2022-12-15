@@ -474,7 +474,7 @@ end
 cap program drop top_matchups
 program define top_matchups
 	
-	confirm frame predictions
+	cap confirm frame predictions
 	if _rc != 0 compile_predictions
 	
 	cwf predictions
