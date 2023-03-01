@@ -17,7 +17,6 @@ foreach player in `all_players' {
 cap frame drop games
 frame create games
 cwf games
-//import excel "CRAPPR_calc\CRAPPR Match Results.xlsm", sheet(Results) first case(l) clear
 import delimited "data\CRAPPR Match Results.csv", varn(1) case(l) clear
 
 gen 	daten = date(date, "MDY")
@@ -27,21 +26,10 @@ drop 	date
 rename 	daten date
 
 foreach var in winner1 winner2 loser1 loser2 {
-	replace `var' = subinstr(`var', " ", "", .)
-	replace `var' = "Jeffrey" if `var' == "Jeff"
+	//drop if strpos(`var', "_OH")  // uncomment to exclude off-hand games
 	replace `var' = "Neil_intern" if `var' == "Neil" & _n < 958
+	drop if `var' == "Jordan"
 }
-
-drop if mi(winner1, winner2, loser1, loser2)
-
-drop in 958
-drop if inlist("Jordan", winner1, winner2, loser1, loser2)
-
-/*
-foreach var in winner1 winner2 loser1 loser2 {
-	drop if strpos(`var', "_OH")
-}
-*/
 
 
 gen game = _n
