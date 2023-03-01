@@ -48,10 +48,25 @@ twoway
 gen UB_sem = win + sem * 1.96
 gen LB_sem = win - sem * 1.96
 
+gen binomial_prob = binomialtail(N, wins, bin_05)
+gen binomial_C = 0
+sum N if N == wins
+forval C = 1/`r(max)' {
+	noi di "`C'"
+	replace binomial_C = `C' if binomial_prob < 0.95
+	replace binomial_prob = binomialtail(N, wins - `C', bin_05) if binomial_prob < 0.95
+}
+gen binomial_LB = (N - binomial_C) / N
+
+gen 	UB = min(UB_sem, 1)
+gen 	LB = LB_sem
+replace LB = binomial_LB if wins == N
+
+
 #d ;
 twoway
 	(scatter win mean_pre_odds)
-	(rcap UB_sem LB_sem mean_pre_odds)
+	(rcap UB LB mean_pre_odds)
 	(scatteri .5 .5 1 1, connect(line) msize(vsmall))
 	,
 	title("CRAPPR Prediction Accuracy Diagnostics", span)
