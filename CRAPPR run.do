@@ -3,6 +3,7 @@ clear all
 
 do "CRAPPR functions.do"
 
+* create player frames
 cap frame drop players
 frame create players
 cwf players
@@ -14,6 +15,7 @@ foreach player in `all_players' {
 	create_player `player'
 }
 
+* import and prep game results data
 cap frame drop games
 frame create games
 cwf games
@@ -31,7 +33,7 @@ foreach var in winner1 winner2 loser1 loser2 {
 	drop if `var' == "Jordan"
 }
 
-
+* run CRAPPR
 gen game = _n
 order game
 
@@ -41,15 +43,15 @@ join_player_attributes
 rebuild_leaderboard_macros
 join_ratings_to_games
 
+* print leaderboard
 cwf players
-
 format mean sd CRAPPR %4.2f
-list name CRAPPR games if current_regular
+list name CRAPPR games if current_regular, noobs
 
 exit
 
-do "Graph - Ratings Over Recent Games.do" 40 
-do "Graph - Leaderboard.do" td(03nov2022)
+do "Graph - Ratings Over Recent Games.do" 100
+do "Graph - Leaderboard.do" td(01feb2023)
 do "Graph - Ranking Changes.do" 40
 
 cap putdocx clear
@@ -62,10 +64,10 @@ putdocx save  "output/CRAPPR - Weekly Ranking.docx", replace
 
 exit
 
-export_web_data
-
-! cd "..\CRAPPR-dashboard" & git add "js/data.js" & git commit -m "update ranking data" & git push
+top_matchups
 
 exit
 
-top_matchups
+export_web_data
+
+! cd "..\CRAPPR-dashboard" & git add "js/data.js" & git commit -m "update ranking data" & git push
