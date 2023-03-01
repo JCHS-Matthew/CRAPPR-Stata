@@ -35,7 +35,7 @@ foreach var in winner1 winner2 loser1 loser2 {
 drop if mi(winner1, winner2, loser1, loser2)
 
 drop in 958
-
+drop if inlist("Jordan", winner1, winner2, loser1, loser2)
 
 /*
 foreach var in winner1 winner2 loser1 loser2 {
