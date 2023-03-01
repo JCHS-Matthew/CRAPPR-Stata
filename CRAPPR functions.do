@@ -503,7 +503,53 @@ program define top_matchups
 
 	order prediction quality, last
 
+	label var team1      "Team 1"
+	label var team2      "Team 2"
+	label var prediction "Prediction"
+	label var quality    "Quality"
+	
 	br team1 team2 prediction quality if top_matchup <= 5 & quality > 98
+	
+	preserve
+		keep if top_matchup <= 5 & quality > 98
+		keep team1 team2 quality
+		local rowcount = _N
+		export excel using "output/CRAPPR - Top Matchups.xlsx", cell(B5) replace
+	restore
+	
+
+	putexcel set "output/CRAPPR - Top Matchups.xlsx", modify
+		putexcel B1:D1 = "CRAPPR Predicted Best Matchups" ///
+			, overwritefmt merge hcenter vcenter font("Times New Roman", 16) bold
+		putexcel B2:D2 , overwritefmt border(bottom, medium)
+		
+		putexcel B3 = "Team 1", overwritefmt hcenter vcenter border(bottom) font("Times New Roman", 12)
+		putexcel C3 = "Team 2", overwritefmt hcenter vcenter border(bottom) font("Times New Roman", 12)
+		putexcel D3 = "Quality", overwritefmt hcenter vcenter border(bottom) font("Times New Roman", 12)
+		
+		putexcel B5:C`=`rowcount' + 4', overwritefmt txtin(1) font("Times New Roman", 12)
+		putexcel D5:D`=`rowcount' + 4', overwritefmt hcenter font("Times New Roman", 12)
+		
+		putexcel B`=`rowcount' + 5':D`=`rowcount' + 5', overwritefmt border(bottom, medium)
+		
+		putexcel B`=`rowcount' + 7':D`=`rowcount' + 7' ///
+			= "Note: “Quality” measures the divergence in predicted outcome between the two teams (e.g., if one team has a 50.5% chance of winning and the other has 49.5%, then the quality is 100 – (50.5 – 49.5) = 99.0)." ///
+			, overwritefmt merge txtwrap font("Times New Roman", 10)
+	putexcel save
+	
+	mata: b = xl()
+	mata: b.load_book("output/CRAPPR - Top Matchups.xlsx")
+	mata: b.set_sheet("Sheet1")
+	mata: b.set_column_width(2, 3, 21)
+	mata: b.set_column_width(4, 4, 13)
+	mata: b.set_row_height(1, 1, 20)
+	mata: b.set_row_height(2, 2, 5)
+	mata: b.set_row_height(3, 3, 27)
+	mata: b.set_row_height(4, 4, 5)
+	mata: b.set_row_height(`=`rowcount' + 5', `=`rowcount' + 6', 5)
+	mata: b.set_row_height(`=`rowcount' + 7', `=`rowcount' + 7', 39)
+	mata: b.close_book()
+	
 end
 
 
