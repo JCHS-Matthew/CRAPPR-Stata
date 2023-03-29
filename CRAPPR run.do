@@ -19,7 +19,7 @@ foreach player in `all_players' {
 cap frame drop games
 frame create games
 cwf games
-import delimited "data\CRAPPR Match Results.csv", varn(1) case(l) clear
+import delimited "..\CRAPPR-match-results\CRAPPR Match Results.csv", varn(1) case(l) clear
 
 gen 	daten = date(date, "MDY")
 format 	daten %td
