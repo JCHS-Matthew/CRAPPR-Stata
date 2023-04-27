@@ -273,7 +273,7 @@ program define join_ratings_to_games
 
 	frame games: drop if game == 0
 
-	foreach name in $current_players {
+	foreach name in $all_players {
 		cwf `name'
 		tempfile player
 		save `player'
@@ -289,7 +289,7 @@ program define join_ratings_to_games
 		rename sd `name'_sd
 	}
 
-	foreach player in $current_regulars {
+	foreach player in $all_players {
 		di "`player'"
 		label var `player' "`player'"
 	}
