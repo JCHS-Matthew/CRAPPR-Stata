@@ -65,6 +65,7 @@ putdocx save  "output/CRAPPR - Weekly Ranking.docx", replace
 exit
 
 top_matchups
+! start excel "output/CRAPPR - Top Matchups.xlsx"
 
 exit
 
