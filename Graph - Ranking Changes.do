@@ -29,8 +29,8 @@ foreach player in $current_regulars {
 	label var `player' "`player'"
 }
 
-label var Sherry_J "Sherry J"
-label var David_S "David S"
+cap label var Sherry_J "Sherry J"
+cap label var David_S "David S"
 
 gen foo = -1 * (_N - game)
 

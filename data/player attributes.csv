@@ -6,7 +6,7 @@ Matt, ,1,1, us
 Andrew, ,0,0, us
 Lena, ,0,0, us
 Peter, ,0,0, ca
-Jeffrey, ,1,1, ca
+Jeffrey, ,1,0, ca
 Sherry," ""Sherry Z""",0,0, us
 Steve, ,0,0, us
 Ricardo, ,1,1, ar
@@ -27,11 +27,11 @@ Andres, ,1,1, es
 Victor, ,1,1, cn
 Zeeshan, ,1,1, us
 Jack, ,1,1, us
-Sherry_J," ""Sherry J""",1,1, us
+Sherry_J," ""Sherry J""",1,0, us
 Yumeng, ,1,1, us
 Karen, ,0,0, us
 Raina, ,1,1, us
-Nikhil, ,1,1, us
+Nikhil, ,1,0, us
 Shuang, ,0,0, 
 Ben_OH," ""Ben (OH)""",1,0, 
 Matt_OH," ""Matt (OH)""",1,0, 
@@ -39,10 +39,10 @@ Rowan_OH," ""Rowan (OH)""",1,0,
 Andres_OH," ""Andres (OH)""",1,0, 
 Benael,,1,1,
 Brooke,,1,0,
-Vasisht,,1,1,
-Cedric,,1,1,
+Vasisht,,1,0,
+Cedric,,1,0,
 Ani,,1,0,
-Adam,,1,1,
-Awaid,,1,1,
-Joel,,1,1,
-Sean,,1,0,
+Adam,,0,0,
+Awaid,,1,0,
+Joel,,0,0,
+Sean,,0,0,
