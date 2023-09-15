@@ -51,7 +51,9 @@ foreach name in $all_players {
 }
 
 replace n = -1 * n
-line 	$current_regulars  n in 1/20, title(CRAPPR Rating, span) subtitle("Over Each Player’s 20 Most Recent Games", span) legend(col(1) pos(3)) yscale(r(0)) ylabel(0(5)30, angle(0)) xtitle("Game") xlabel(-20(5)0, grid) graphregion(color(white)) 
+
+local num_games 200
+line 	Ben Rowan Matt Andres n in 1/`num_games', title(CRAPPR Rating, span) subtitle("Over Each Player’s `num_games' Most Recent Games", span) legend(col(1) pos(3)) yscale(r(23)) ylabel(23(.5)25, angle(0)) xtitle("Game") xlabel(-`num_games'(20)0, grid) graphregion(color(white)) 
 
 
 
