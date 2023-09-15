@@ -555,7 +555,8 @@ end
 
 cap program drop export_web_data
 program define export_web_data
-
+	args date
+	
 	frame
 	local currentframe = r(currentframe)
 	
@@ -575,7 +576,7 @@ program define export_web_data
 	
 	set obs `=_N+2'
 	sort web_data
-	replace web_data = `"let leaderboard_date = "12/1/2022""' in 1
+	replace web_data = `"let leaderboard_date = "`date'""' in 1
 	replace web_data = "let players = {" in 2
 	
 	set obs `=_N+1'

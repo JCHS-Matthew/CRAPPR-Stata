@@ -50,8 +50,8 @@ list name CRAPPR games if current_regular, noobs
 
 exit
 
-do "Graph - Ratings Over Recent Games.do" 182
-do "Graph - Leaderboard.do" td(30mar2023)
+do "Graph - Ratings Over Recent Games.do" 147
+do "Graph - Leaderboard.do" td(30apr2023)
 do "Graph - Ranking Changes.do" 40
 
 cap putdocx clear
@@ -69,6 +69,6 @@ top_matchups
 
 exit
 
-export_web_data
+export_web_data "5/25/2023"
 
 ! cd "..\CRAPPR-dashboard" & git add "js/data.js" & git commit -m "update ranking data" & git push
