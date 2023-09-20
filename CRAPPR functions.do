@@ -380,7 +380,7 @@ cap program drop _display_predictions
 program define _display_predictions
 	frame predictions {
 		duplicates drop
-		gen quality = -2 * abs(50 - prediction)
+		gen quality = 100 - 2 * abs(50 - prediction)
 		gsort -quality
 		format prediction quality %4.2f
 		list matchup prediction quality, ab(10)
