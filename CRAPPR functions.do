@@ -303,7 +303,7 @@ cap program drop join_player_attributes
 program define join_player_attributes
 	cwf players
 	preserve
-		import delimited "data\player attributes.csv", varn(1) clear
+		import delimited "..\CRAPPR-match-results\player attributes.csv", varn(1) clear
 		tempfile player_attributes
 		save 	`player_attributes'
 	restore
