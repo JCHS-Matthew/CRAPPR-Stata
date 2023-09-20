@@ -8,7 +8,7 @@ cap frame drop players
 frame create players
 cwf players
 
-import delimited "data\player attributes.csv", varn(1) clear
+import delimited "..\CRAPPR-match-results\player attributes.csv", varn(1) clear
 levelsof name, local(all_players)
 clear
 foreach player in `all_players' {
