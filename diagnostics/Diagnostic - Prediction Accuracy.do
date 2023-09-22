@@ -1,4 +1,15 @@
 
+
+syntax anything(name=model)
+
+if "`model'" == "" local model "06sep2022 10"
+
+local cutoffdate `: word 1 of `model''
+local min_games  `: word 2 of `model''
+
+noi di "`cutoffdate'"
+noi di "`min_games'"
+
 cwf games
 cap frame drop diagnostic
 frame put *, into(diagnostic)
@@ -13,8 +24,8 @@ gen bin_05 = mod(pre_odds, 0.05)
 replace bin_05 = pre_odds - bin_05
 replace bin_05 = bin_05 + 0.025
 
-keep if date >= td(06sep2022)
-keep if pre_match_min_player_games >= 10
+keep if date >= td(`cutoffdate')
+keep if pre_match_min_player_games >= `min_games'
 
 collapse (mean) win (sum) wins=win (count) N=win (sem) sem=win (mean) mean_pre_odds=pre_odds, by(bin)
 
