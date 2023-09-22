@@ -27,8 +27,41 @@ replace bin_05 = bin_05 + 0.025
 keep if date >= td(`cutoffdate')
 keep if pre_match_min_player_games >= `min_games'
 
-collapse (mean) win (sum) wins=win (count) N=win (sem) sem=win (mean) mean_pre_odds=pre_odds, by(bin)
+gen resid = 1 - pre_match_prediction
+gen resid_sq = resid^2
 
+sum win
+local correct_prediction_pct = r(sum) / _N
+
+sum resid_sq
+local SSR = r(sum)
+
+collapse (mean) win (sum) wins=win (count) N=win (sem) sem=win (mean) mean_pre_odds=pre_odds resid_sq, by(bin)
+
+gen  est_diff = win - mean_pre_odds
+reg  est_diff bin_05 [fw=N]
+
+local reg_coef = _b[bin_05]
+local reg_cons = _b[_cons]
+local reg_R2   = e(r2_a)
+
+preserve
+	gen model = "`model'"
+	tostring bin_05, replace force format("%4.3f")
+	replace bin_05 = substr(bin_05, -3, 3)
+	reshape wide win wins N sem mean_pre_odds resid_sq est_diff, i(model) j(bin_05) string
+
+	foreach var in reg_R2 reg_cons reg_coef SSR correct_prediction_pct {
+		gen `var' = ``var''
+		order `var', after(model)
+	}
+	
+	tempfile res
+	save 	`res'
+	cap frame diagnostic_results: append using `res'
+restore
+
+drop if N == 1
 
 #d ;
 twoway
