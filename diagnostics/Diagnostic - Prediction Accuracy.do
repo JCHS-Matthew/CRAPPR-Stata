@@ -33,6 +33,7 @@ twoway
 	ytitle("Actual Win Share")
 	ytick(.4(.1)1)
 	ylabel(.4(.1)1)
+	ylabel(.4(.1)1, angle(0))
 	
 	note(
 		"Notes: "
@@ -78,6 +79,7 @@ twoway
 	ytitle("Actual Win Share")
 	ytick(.4(.1)1)
 	ylabel(.4(.1)1)
+	ylabel(.4(.1)1, angle(0))
 	
 	note(
 		"Notes: "
