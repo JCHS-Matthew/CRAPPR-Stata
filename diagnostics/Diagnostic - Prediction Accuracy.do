@@ -1,6 +1,6 @@
 
 
-syntax anything(name=model)
+syntax [anything(name=model)]
 
 if "`model'" == "" local model "06sep2022 10"
 
@@ -45,15 +45,18 @@ twoway
 	ytick(.4(.1)1)
 	ylabel(.4(.1)1, angle(0))
 	
+	text(.42 1 "`: word 3 of `model'' `: word 4 of `model''", place(left) size(small))
+
 	note(
 		"Notes: "
-		"[1] Includes games since Sept. 6, 2022."
-		"[2] Includes games where every player had played at least 10 previous games."
+		"[1] Includes games since `cutoffdate'."
+		"[2] Includes games where every player had played at least `min_games' previous games."
 		"[3] Marker size weighted by number of games."
 		, span size(vsmall)
 	)
 	legend(off) 
 ; #d cr;
+graph export "Diagnostics/Output/Diagnostic - bin weighted scatter - `model'.png", width(2000) replace
 
 
 gen UB_sem = win + sem * 1.96
@@ -92,12 +95,15 @@ twoway
 	ytick(.4(.1)1)
 	ylabel(.4(.1)1, angle(0))
 	
+	text(.42 1 "`: word 3 of `model'' `: word 4 of `model''", place(left) size(small))
+	
 	note(
 		"Notes: "
-		"[1] Includes games since Sept. 6, 2022."
-		"[2] Includes games where every player had played at least 10 previous games."
+		"[1] Includes games since `cutoffdate'."
+		"[2] Includes games where every player had played at least `min_games' previous games."
 		"[3] Chart shows 95% confidence intervals. For bins with zero variance, CIs reflects the highest discrete win total at which the binomial probability is >= 0.95."
 		, span size(vsmall)
 	)
 	legend(off) 
 ; #d cr;
+graph export "Diagnostics/Output/Diagnostic - bin error bars - `model'.png", width(2000) replace
