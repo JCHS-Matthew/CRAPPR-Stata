@@ -52,10 +52,12 @@ gen LB_sem = win - sem * 1.96
 gen binomial_prob = binomialtail(N, wins, bin_05)
 gen binomial_C = 0
 sum N if N == wins
-forval C = 1/`r(max)' {
-	noi di "`C'"
-	replace binomial_C = `C' if binomial_prob < 0.95
-	replace binomial_prob = binomialtail(N, wins - `C', bin_05) if binomial_prob < 0.95
+if r(N) > 0 {
+	forval C = 1/`r(max)' {
+		noi di "`C'"
+		replace binomial_C = `C' if binomial_prob < 0.95
+		replace binomial_prob = binomialtail(N, wins - `C', bin_05) if binomial_prob < 0.95
+	}
 }
 gen binomial_LB = (N - binomial_C) / N
 
