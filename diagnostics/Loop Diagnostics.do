@@ -67,12 +67,11 @@ end
 
 cap frame create diagnostic_results
 
-loop_diagnostic 50  6
-loop_diagnostic 100 6
-loop_diagnostic 200 6
-loop_diagnostic 50  3
-loop_diagnostic 100 3
-loop_diagnostic 200 3
-loop_diagnostic 50  4
-loop_diagnostic 100 4
-loop_diagnostic 200 4
+//loop_diagnostic 200 6
+
+foreach dyn of numlist 5 10(10)100 150 200 300 {
+	foreach b of numlist 2/8 {
+		loop_diagnostic `dyn' `b'
+	}
+}
+
