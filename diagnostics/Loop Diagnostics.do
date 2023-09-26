@@ -75,3 +75,29 @@ foreach dyn of numlist 5 10(10)100 150 200 300 {
 	}
 }
 
+
+exit
+
+cwf diagnostic_results
+
+duplicates drop
+
+local model_regex "^(\d{2}[a-z]{3}\d{4} \d{2,3}) (\d{1,3}) (\d)$"
+
+gen model_group = ustrregexs(1) if ustrregexm(model, "`model_regex'")
+gen dynamic     = ustrregexs(2) if ustrregexm(model, "`model_regex'")
+gen beta        = ustrregexs(3) if ustrregexm(model, "`model_regex'")
+
+destring dynamic, replace
+destring beta, replace
+	
+order model model_group dynamic beta
+
+cap frame drop analysis
+frame put *, into(analysis)
+cwf analysis
+
+keep model_group dynamic beta correct_prediction_pct SSR reg_coef reg_cons reg_R2
+
+reshape wide correct_prediction_pct SSR reg_coef reg_cons reg_R2, i(model_group dynamic) j(beta)
+order model_group dynamic correct_prediction_pct* SSR* reg_coef* reg_cons* reg_R2*
