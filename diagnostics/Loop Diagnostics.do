@@ -1,4 +1,5 @@
-do "CRAPPR functions.do"
+
+do "../CRAPPR functions.do"
 
 cap program drop loop_diagnostic
 program define   loop_diagnostic
@@ -24,7 +25,7 @@ program define   loop_diagnostic
 		frame create players
 		cwf players
 
-		import delimited "..\CRAPPR-match-results\player attributes.csv", varn(1) clear
+		import delimited "../../CRAPPR-match-results/player attributes.csv", varn(1) clear
 		levelsof name, local(all_players)
 		clear
 		foreach player in `all_players' {
@@ -35,7 +36,7 @@ program define   loop_diagnostic
 		cap frame drop games
 		frame create games
 		cwf games
-		import delimited "..\CRAPPR-match-results\CRAPPR Match Results.csv", varn(1) case(l) clear
+		import delimited "../../CRAPPR-match-results/CRAPPR Match Results.csv", varn(1) case(l) clear
 
 		gen 	daten = date(date, "MDY")
 		format 	daten %td
@@ -59,7 +60,7 @@ program define   loop_diagnostic
 		analyze_games
 
 		forval min_games =10(90)100 { 
-			do "diagnostics\Diagnostic - Prediction Accuracy.do" `startdate' `min_games' `dynamic' `beta'
+			do "Diagnostic - Prediction Accuracy.do" `startdate' `min_games' `dynamic' `beta'
 		}
 	}
 end

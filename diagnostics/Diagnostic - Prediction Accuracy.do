@@ -89,7 +89,7 @@ twoway
 	)
 	legend(off) 
 ; #d cr;
-graph export "Diagnostics/Output/Diagnostic - bin weighted scatter - `model'.png", width(2000) replace
+graph export "Output/Diagnostic - bin weighted scatter - `model'.png", width(2000) replace
 
 
 gen UB_sem = win + sem * 1.96
@@ -139,4 +139,4 @@ twoway
 	)
 	legend(off) 
 ; #d cr;
-graph export "Diagnostics/Output/Diagnostic - bin error bars - `model'.png", width(2000) replace
+graph export "Output/Diagnostic - bin error bars - `model'.png", width(2000) replace
