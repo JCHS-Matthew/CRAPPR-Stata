@@ -15,7 +15,8 @@ drop winner* loser*
 
 keep game $current_regulars
 
-rename Ben-Niraj CRAPPR=
+rename * CRAPPR=
+rename CRAPPRgame game
 reshape long CRAPPR, i(game) j(name) string
 drop if mi(CRAPPR)
 gsort game -CRAPPR
