@@ -17,7 +17,6 @@ gsort -CRAPPR
 
 gen active_player = strpos("$current_players", name) > 0
 replace active_player = 0 if inlist(name, "David", "Sherry")
-replace name = "☠Zeeshan" if name == "Zeeshan"
 
 drop if !active_player
 
@@ -25,6 +24,10 @@ gen n = _n
 forval i = 1/`=_N' {
 	label define name_lables `i' `"`=subinstr("`=name[`i']'", "_", " ", .)'"', modify
 }
+
+sum n if name == "Zeeshan"
+label define name_lables `r(mean)' "☠Zeeshan", modify
+
 label values n name_lables
 
 format CRAPPR %2.0f
@@ -53,8 +56,7 @@ preserve
 	keep in L
 	append using `previous_leaderboard'
 	keep game $current_regulars
-	rename * CRAPPR=
-	rename CRAPPRgame game
+	rename Ben-Niraj CRAPPR=
 	reshape long CRAPPR, i(game) j(name) string
 	drop if mi(CRAPPR)
 	gsort game -CRAPPR
