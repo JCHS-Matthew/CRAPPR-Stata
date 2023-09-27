@@ -28,7 +28,7 @@ label values n name_lables
 
 format CRAPPR %2.0f
 
-//drop if games == 1
+drop if games <= 1
 
 forval i = 1/`=_N' {
 	noi di "`=name[`i']'"
@@ -52,7 +52,8 @@ preserve
 	keep in L
 	append using `previous_leaderboard'
 	keep game $current_regulars
-	rename Ben-Niraj CRAPPR=
+	rename * CRAPPR=
+	rename CRAPPRgame game
 	reshape long CRAPPR, i(game) j(name) string
 	drop if mi(CRAPPR)
 	gsort game -CRAPPR

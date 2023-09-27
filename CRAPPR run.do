@@ -8,7 +8,7 @@ cap frame drop players
 frame create players
 cwf players
 
-import delimited "data\player attributes.csv", varn(1) clear
+import delimited "..\CRAPPR-match-results\player attributes.csv", varn(1) clear
 levelsof name, local(all_players)
 clear
 foreach player in `all_players' {
@@ -50,8 +50,8 @@ list name CRAPPR games if current_regular, noobs
 
 exit
 
-do "Graph - Ratings Over Recent Games.do" 182
-do "Graph - Leaderboard.do" td(30mar2023)
+do "Graph - Ratings Over Recent Games.do" 150
+do "Graph - Leaderboard.do" td(23jun2023)
 do "Graph - Ranking Changes.do" 40
 
 cap putdocx clear
@@ -69,6 +69,6 @@ top_matchups
 
 exit
 
-export_web_data
+export_web_data "8/25/2023"
 
 ! cd "..\CRAPPR-dashboard" & git add "js/data.js" & git commit -m "update ranking data" & git push

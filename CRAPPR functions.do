@@ -303,7 +303,7 @@ cap program drop join_player_attributes
 program define join_player_attributes
 	cwf players
 	preserve
-		import delimited "data\player attributes.csv", varn(1) clear
+		import delimited "..\CRAPPR-match-results\player attributes.csv", varn(1) clear
 		tempfile player_attributes
 		save 	`player_attributes'
 	restore
@@ -380,7 +380,7 @@ cap program drop _display_predictions
 program define _display_predictions
 	frame predictions {
 		duplicates drop
-		gen quality = -2 * abs(50 - prediction)
+		gen quality = 100 - 2 * abs(50 - prediction)
 		gsort -quality
 		format prediction quality %4.2f
 		list matchup prediction quality, ab(10)
@@ -555,7 +555,8 @@ end
 
 cap program drop export_web_data
 program define export_web_data
-
+	args date
+	
 	frame
 	local currentframe = r(currentframe)
 	
@@ -575,7 +576,7 @@ program define export_web_data
 	
 	set obs `=_N+2'
 	sort web_data
-	replace web_data = `"let leaderboard_date = "12/1/2022""' in 1
+	replace web_data = `"let leaderboard_date = "`date'""' in 1
 	replace web_data = "let players = {" in 2
 	
 	set obs `=_N+1'
