@@ -17,6 +17,7 @@ gsort -CRAPPR
 
 gen active_player = strpos("$current_players", name) > 0
 replace active_player = 0 if inlist(name, "David", "Sherry")
+replace name = "☠Zeeshan" if name == "Zeeshan"
 
 drop if !active_player
 
