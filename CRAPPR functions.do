@@ -3,8 +3,8 @@
 gl initial_mean 	25
 gl sd_factor 		3
 gl initial_sd 		= $initial_mean / $sd_factor
-gl initial_dynamic 	= $initial_mean / $sd_factor / 200
-gl initial_beta 	= $initial_mean / 6
+gl initial_dynamic 	= $initial_mean / $sd_factor / 50
+gl initial_beta 	= $initial_mean / 5
 
 di "initial_mean"		char(9) as result %3.1f $initial_mean 		_n ///
    "sd_factor"			char(9) as result %3.1f $sd_factor 			_n ///
