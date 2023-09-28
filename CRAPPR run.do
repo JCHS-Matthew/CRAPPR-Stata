@@ -50,8 +50,8 @@ list name CRAPPR games if current_regular, noobs
 
 exit
 
-do "Graph - Ratings Over Recent Games.do" 150
-do "Graph - Leaderboard.do" td(23jun2023)
+do "Graph - Ratings Over Recent Games.do" 1100
+do "Graph - Leaderboard.do" td(05sep2023)
 do "Graph - Ranking Changes.do" 40
 
 cap putdocx clear
