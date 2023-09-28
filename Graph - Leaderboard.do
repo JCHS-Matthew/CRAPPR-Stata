@@ -24,6 +24,10 @@ gen n = _n
 forval i = 1/`=_N' {
 	label define name_lables `i' `"`=subinstr("`=name[`i']'", "_", " ", .)'"', modify
 }
+
+sum n if name == "Zeeshan"
+label define name_lables `r(mean)' "☠Zeeshan", modify
+
 label values n name_lables
 
 format CRAPPR %2.0f
