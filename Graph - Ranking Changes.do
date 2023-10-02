@@ -52,7 +52,7 @@ gen foo = -1 * (_N - _n)
 
 #d;
 twoway
-	(line $current_regulars foo in -`changes_shown'/L),
+	line $current_regulars foo in -`changes_shown'/L,
 		lwidth(3 ..) 
 		
 		title("CRAPPR Rankings", span) 
