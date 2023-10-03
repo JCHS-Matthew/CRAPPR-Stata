@@ -50,5 +50,33 @@ foreach player in $current_regulars {
 drop if ratingorder == ratingorder[_n-1]
 drop foo
 gen foo = -1 * (_N - _n)
-line $current_regulars foo in -`changes_shown'/L, lwidth(3 ..) yscale(reverse) ylabel(1/15, angle(0)) xlabel(-`changes_shown'(10)0) title("CRAPPR Rankings", span) subtitle("Over `changes_shown' Most Recent Ranking Changes", span) xtitle("") legend(col(1) pos(3) symxsize(4) rowgap(3) region(style(none) margin(0 0 0 0)) bmargin(1 0 .25 .25)) xsize(6.5) ysize(4.45) graphregion(color(white) margin(0 0 b+1 t+1))
+
+#d;
+twoway
+	line $current_regulars foo in -`changes_shown'/L,
+		lwidth(3 ..) 
+		
+		title("CRAPPR Rankings", span) 
+		subtitle("Over `changes_shown' Most Recent Ranking Changes", span) 
+		
+		yscale(reverse) 
+		ylabel(1/15, angle(0)) 
+		
+		xlabel(-`changes_shown'(10)0) 
+		xtitle("") 
+
+		legend(col(1) 
+		pos(3) 
+		symxsize(4) 
+		rowgap(3) 
+		region(style(none) 
+		margin(0 0 0 0)) 
+		bmargin(1 0 .25 .25)) 
+		
+		xsize(6.5) 
+		ysize(4.45) 
+		
+		graphregion(color(white) 
+		margin(0 0 b+1 t+1))
+; #d cr;
 graph export "output/Graph - Ranking Changes.png", width(2400) replace
