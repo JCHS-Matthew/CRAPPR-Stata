@@ -6,6 +6,15 @@ if "`games_shown'" == "" local games_shown 40
 
 cwf games
 
+cap frame drop graph_ratings
+frame put $current_regulars game, into(graph_ratings)
+
+cwf graph_ratings
+
+foreach player in $current_regulars {
+	replace `player' = . if `player' < 0
+}
+
 #d ;
 line 
 	$current_regulars game in -`games_shown'/L
@@ -34,3 +43,6 @@ line
 #d cr;
 
 graph export "output/Graph - Ratings Over Recent Games.png", width(2400) replace
+
+cwf players
+cap frame drop graph_ratings
